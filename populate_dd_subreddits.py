@@ -9,6 +9,7 @@ import sqlite3
 import praw
 from prawcore import NotFound
 import configparser
+import traceback
 
 def sub_exists(sub):
     exists = True
@@ -17,20 +18,6 @@ def sub_exists(sub):
     except NotFound:
         exists = False
     return exists
-
-config_data = configparser.ConfigParser()
-config_data.read("api_secrets.ini")
-api_secrets = config_data["api_secrets"]
-
-reddit = praw.Reddit(client_id = api_secrets.get("client_id"),
-                     client_secret = api_secrets.get("client_secret"),
-                     user_agent = api_secrets.get("user_agent"),
-                     username = api_secrets.get("username"),
-                     password = api_secrets.get("password"))
-
-config_data.read("config.ini")
-
-connection = sqlite3.connect(config_data.get("database","db_name"))
 
 def insert_dd_subreddit(subrname):
     for subr in subrname:
@@ -46,15 +33,42 @@ def insert_dd_subreddit(subrname):
             
             try:
                 cur.execute(sql_query, sql_data)
-                connection.commit()
+                connection.commit() #commit after each record of subreddit is inserted
                 print("Subreddit %s inserted successfully" % sub_name)
             except sqlite3.Error as er:
                 print('SQLite error: %s' % (' '.join(er.args)))
         else:
             print("Invalid Subreddit Name")
 
-sub_list =  ((config_data.get("subreddits","sub_list")).replace('\n','')).split(',')
+try:
+    config_data = configparser.ConfigParser()
 
-insert_dd_subreddit(sub_list)
+    config_data.read("meta_config.ini")
+    api_secrets_config = config_data.get("config_files","api_secrets_config")
+    script_config = config_data.get("config_files","script_config")
 
-connection.close()
+    config_data.read(api_secrets_config)
+    api_secrets = config_data["api_secrets"]
+
+    reddit = praw.Reddit(client_id = api_secrets.get("client_id"),
+                        client_secret = api_secrets.get("client_secret"),
+                        user_agent = api_secrets.get("user_agent"),
+                        username = api_secrets.get("username"),
+                        password = api_secrets.get("password"))
+
+    config_data.read(script_config)
+
+    try:
+        connection = sqlite3.connect(config_data.get("database","db_name"))
+    except sqlite3.Error as error:
+        print("Error connecting to the database",error)
+        raise
+
+    sub_list =  ((config_data.get("subreddits","sub_list")).replace('\n','')).split(',')
+
+    insert_dd_subreddit(sub_list)
+
+except Exception:
+    traceback.print_exc()
+finally:
+    connection.close()
