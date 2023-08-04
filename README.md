@@ -24,7 +24,7 @@ Make sure you have python3 with the [PRAW](https://pypi.org/project/praw/) modul
 
    You can change the default configs like Database name/location, limits and subreddit list using the `config.ini`
 
-   Currently the subreddit list is the Top 50 SFW subreddits with the most comments taken from [subredditstats.com](https://subredditstats.com/)
+   Currently the subreddit list is the Top 50 SFW subreddits with the most Comments per day taken from [subredditstats.com](https://subredditstats.com/)
 
    If you want to use multiple config files for testing and development you can change the default config file names in `meta_config.ini`
 
