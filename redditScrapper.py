@@ -129,6 +129,9 @@ for sub_rec in sub_records:
 
             subRS = subRS + postRS
 
+            if posts_inserted == 10:
+                    break
+
     if posts_inserted == 0: #Incase there are 0 post for a subreddit for now
         subRS = 0
     else:
