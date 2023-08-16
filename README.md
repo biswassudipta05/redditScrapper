@@ -2,6 +2,8 @@
 
 redditScrapper is a little project coded using python and can be used to scrap data for subreddits, posts and comments and make simple CSV report from the data
 
+**Refer to [redditScrapper_DAG](https://github.com/biswassudipta05/redditScrapper_DAG) for the Apache Airflow Extension of this project.**
+
 ## Installation
 
 Make sure you have python3 with the [PRAW](https://pypi.org/project/praw/) module installed
